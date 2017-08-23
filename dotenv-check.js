@@ -9,8 +9,13 @@ const mapArgsToObject = (args = []) =>
       return result
     }, [])
     .reduce((result, [key, value]) => {
-      if (/-[a-zA-Z]+/.test(key)) {
+      if (/--[a-z]+/.test(key)) {
+        result[key.slice(2)] = true
+        return result
+      }
+      if (/-[a-z]+/.test(key)) {
         result[key.slice(1)] = value
+        return result
       }
       return result
     }, {})
@@ -18,11 +23,12 @@ const mapArgsToObject = (args = []) =>
 const argv = mapArgsToObject(process.argv.slice(2))
 const sourceFilePath = argv.s
 const targetFilePath = argv.t
+const SILENT_MODE = argv.silent
 const TARGET_LINE_REGEX = /\w+=\w+/
 const SOURCE_LINE_REGEX = /\w+=(\w+)?/
 
 const log = (msg = '') => {
-  console.log(`[DOTENV CHECK] ${msg}`)
+  if (!SILENT_MODE) console.log(`[DOTENV CHECK] ${msg}`)
 }
 
 if (!sourceFilePath) {
@@ -50,7 +56,7 @@ log(`\n\nComparing ${targetFilePath} against ${sourceFilePath}\n\n`)
 const exitIfFalse = (condition, desc = '', logOnFalse) => {
   if (!condition) {
     log(`if ${desc} \n NOPE \n`)
-    if (logOnFalse) console.log(`[HINT]: ${logOnFalse}\n\n`)
+    if (logOnFalse) log(`[HINT]: ${logOnFalse}\n\n`)
     log('EXITING\n')
     process.exit(1)
   } else {

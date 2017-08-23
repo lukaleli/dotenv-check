@@ -21,6 +21,16 @@ Node >= 6.4.0
 
 `./dotenv-check.js -s <EXAMPLE_FILE_PATH> -t <TARGET_FILE_PATH>`
 
+Parameters:
+
+```Shell
+-s <PATH>     Source file path (template file)
+
+-t <PATH>     Target file path to check against
+
+--silent      Suppress output messages
+```
+
 ## Example
 
 Create `.env.example` file that serves as a template for you production `.env` files. This file is checked to the code repository.
