@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('fs')
+const path = require('path')
 
 /**
  * Maps command line parameters to the object
@@ -29,6 +30,8 @@ const mapArgsToObject = (args = []) =>
 const argv = mapArgsToObject(process.argv.slice(2))
 const sourceFilePath = argv.s
 const targetFilePath = argv.t
+const sourceFileName = path.basename(sourceFilePath)
+const targetFileName = path.basename(targetFilePath)
 const SILENT_MODE = argv.silent
 const TARGET_LINE_REGEX = /\w+=\w+/
 const SOURCE_LINE_REGEX = /\w+=(\w+)?/
@@ -153,7 +156,7 @@ if (!fs.existsSync(targetFilePath)) {
   process.exit(1)
 }
 
-log(`\n\nComparing ${targetFilePath} against ${sourceFilePath}\n\n`)
+log(`\n\nComparing ${targetFileName} against ${sourceFileName}\n\n`)
 
 // Split both files into lines
 const sourceLines = fs.readFileSync(sourceFilePath, 'utf8').split('\n')
@@ -203,5 +206,5 @@ tokenizedSourceVars.forEach(({ key, allowedValues }) => {
 })
 
 log('SUCCESS!')
-log(`${targetFilePath} matches ${sourceFilePath}`)
+log(`${targetFileName} matches ${sourceFileName}`)
 process.exit(0)
