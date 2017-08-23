@@ -47,9 +47,10 @@ if (!fs.existsSync(targetFilePath)) {
 
 log(`\n\nComparing ${targetFilePath} against ${sourceFilePath}\n\n`)
 
-const exitIfFalse = (condition, desc = '') => {
+const exitIfFalse = (condition, desc = '', logOnFalse) => {
   if (!condition) {
     log(`if ${desc} \n NOPE \n`)
+    if (logOnFalse) console.log(`[HINT]: ${logOnFalse}\n\n`)
     log('EXITING\n')
     process.exit(1)
   } else {
@@ -96,17 +97,20 @@ const targetLines = fs.readFileSync(targetFilePath, 'utf8').split('\n')
 
 exitIfFalse(
   isExactNumberOfLines(sourceLines, targetLines),
-  'source and target files have the same number of lines'
+  'source and target files have the same number of lines',
+  'Source and target files should have the same number of declared variables. Double check it!'
 )
 
 exitIfFalse(
   areLinesMatchingRegex(sourceLines, SOURCE_LINE_REGEX),
-  'source env lines match <KEY>=<?VALUE> pattern'
+  'source env lines match <KEY>=<?ALLOWED_VALUES> pattern',
+  'Check variables declaration in your source file. They should match <KEY>=<?ALLOWED_VALUES> pattern'
 )
 
 exitIfFalse(
   areLinesMatchingRegex(targetLines, TARGET_LINE_REGEX),
-  'target env lines match <KEY>=<VALUE> pattern'
+  'target env lines match <KEY>=<VALUE> pattern',
+  'Check variables declaration in your target file. They should match <KEY>=<VALUE> pattern'
 )
 
 const parsedExampleTokens = sourceLines.map(tokenizeExample)
@@ -116,14 +120,17 @@ parsedExampleTokens.forEach(({ key, allowedValues }) => {
   const targetKeyIndex = parsedTargetTokens.findIndex(el => el.key === key)
   exitIfFalse(targetKeyIndex !== -1, `target has key: $${key}`)
   const targetToken = parsedTargetTokens[targetKeyIndex]
-  if (allowedValues) {
-    exitIfFalse(
-      doesContainAllowedValue(allowedValues, targetToken.value),
-      `target key $${key} equals one of the following values: ${allowedValues.join(
-        ' | '
-      )}`
-    )
-  }
+  if (!allowedValues) return
+  exitIfFalse(
+    doesContainAllowedValue(allowedValues, targetToken.value),
+    `target key $${key} equals one of the following values: ${allowedValues.join(
+      ' | '
+    )}`,
+    `$${key} in your target env file must match one of these values: 
+    ${allowedValues.map(x => `\n   * ${x}\n`).join('')}
+    Current value is: ${targetToken.value}  
+    `
+  )
 })
 
 log('SUCCESS!')
