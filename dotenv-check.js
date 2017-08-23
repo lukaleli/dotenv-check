@@ -42,32 +42,6 @@ const log = (msg = '') => {
   if (!SILENT_MODE) console.log(`[DOTENV CHECK] ${msg}`)
 }
 
-// Check if source file path was provided
-if (!sourceFilePath) {
-  log('Please provide source file path with -s argument')
-  process.exit(1)
-}
-
-// Check if target file path was provided
-if (!targetFilePath) {
-  log('Please provide target file path with -t argument')
-  process.exit(1)
-}
-
-// Check if source file exists
-if (!fs.existsSync(sourceFilePath)) {
-  log(`Source file (${sourceFilePath}) doesn't exist`)
-  process.exit(1)
-}
-
-// Check if target file exists
-if (!fs.existsSync(targetFilePath)) {
-  log(`Target file (${targetFilePath}) doesn't exist`)
-  process.exit(1)
-}
-
-log(`\n\nComparing ${targetFilePath} against ${sourceFilePath}\n\n`)
-
 /**
  * Helper that checks provided boolean
  * and exits the script if false. 
@@ -158,6 +132,32 @@ const doesContainAllowedValue = (allowedValues = [], value = '') => {
   const regex = allowedValues.map(value => `^${value}$`).join('|')
   return new RegExp(`(${regex})`).test(value)
 }
+
+// Check if source file path was provided
+if (!sourceFilePath) {
+  log('Please provide source file path with -s argument')
+  process.exit(1)
+}
+
+// Check if target file path was provided
+if (!targetFilePath) {
+  log('Please provide target file path with -t argument')
+  process.exit(1)
+}
+
+// Check if source file exists
+if (!fs.existsSync(sourceFilePath)) {
+  log(`Source file (${sourceFilePath}) doesn't exist`)
+  process.exit(1)
+}
+
+// Check if target file exists
+if (!fs.existsSync(targetFilePath)) {
+  log(`Target file (${targetFilePath}) doesn't exist`)
+  process.exit(1)
+}
+
+log(`\n\nComparing ${targetFilePath} against ${sourceFilePath}\n\n`)
 
 // Split both files into lines
 const sourceLines = fs.readFileSync(sourceFilePath, 'utf8').split('\n')
