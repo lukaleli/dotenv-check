@@ -75,7 +75,7 @@ const tokenizeTarget = (line = '') => {
   return result
 }
 
-const checkIfExactLinesNumber = (a = [], b = []) => a.length === b.length
+const isExactNumberOfLines = (a = [], b = []) => a.length === b.length
 
 const areLinesMatchingRegex = (collection, regex) =>
   collection.reduce((result, element) => {
@@ -85,7 +85,7 @@ const areLinesMatchingRegex = (collection, regex) =>
     return result
   }, true)
 
-const checkIfContainsAllowedValue = (values = [], currentValue = '') => {
+const doesContainAllowedValue = (values = [], currentValue = '') => {
   if (values.length === 0 && currentValue === '') return true
   const regex = values.map(value => `^${value}$`).join('|')
   return new RegExp(`(${regex})`).test(currentValue)
@@ -95,7 +95,7 @@ const exampleLines = fs.readFileSync(sourceFilePath, 'utf8').split('\n')
 const targetLines = fs.readFileSync(targetFilePath, 'utf8').split('\n')
 
 exitIfFalse(
-  checkIfExactLinesNumber(exampleLines, targetLines),
+  isExactNumberOfLines(exampleLines, targetLines),
   'example and target files have the same number of lines'
 )
 
@@ -118,7 +118,7 @@ parsedExampleTokens.forEach(({ key, allowedValues }) => {
   const targetToken = parsedTargetTokens[targetKeyIndex]
   if (allowedValues) {
     exitIfFalse(
-      checkIfContainsAllowedValue(allowedValues, targetToken.value),
+      doesContainAllowedValue(allowedValues, targetToken.value),
       `target key $${key} equals one of the following values: ${allowedValues.join(
         ' | '
       )}`
