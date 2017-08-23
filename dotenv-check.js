@@ -91,17 +91,17 @@ const doesContainAllowedValue = (allowedValues = [], value = '') => {
   return new RegExp(`(${regex})`).test(value)
 }
 
-const exampleLines = fs.readFileSync(sourceFilePath, 'utf8').split('\n')
+const sourceLines = fs.readFileSync(sourceFilePath, 'utf8').split('\n')
 const targetLines = fs.readFileSync(targetFilePath, 'utf8').split('\n')
 
 exitIfFalse(
-  isExactNumberOfLines(exampleLines, targetLines),
-  'example and target files have the same number of lines'
+  isExactNumberOfLines(sourceLines, targetLines),
+  'source and target files have the same number of lines'
 )
 
 exitIfFalse(
-  areLinesMatchingRegex(exampleLines, SOURCE_LINE_REGEX),
-  'example env lines match <KEY>=<?VALUE> pattern'
+  areLinesMatchingRegex(sourceLines, SOURCE_LINE_REGEX),
+  'source env lines match <KEY>=<?VALUE> pattern'
 )
 
 exitIfFalse(
@@ -109,7 +109,7 @@ exitIfFalse(
   'target env lines match <KEY>=<VALUE> pattern'
 )
 
-const parsedExampleTokens = exampleLines.map(tokenizeExample)
+const parsedExampleTokens = sourceLines.map(tokenizeExample)
 const parsedTargetTokens = targetLines.map(tokenizeTarget)
 
 parsedExampleTokens.forEach(({ key, allowedValues }) => {
