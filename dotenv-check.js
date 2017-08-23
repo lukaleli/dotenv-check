@@ -6,6 +6,7 @@ const fs = require('fs')
  * Maps command line parameters to the object
  * 
  * @param {any} [args=[]] 
+* @returns Object
  */
 const mapArgsToObject = (args = []) =>
   args
