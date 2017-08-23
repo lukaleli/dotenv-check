@@ -85,10 +85,10 @@ const areLinesMatchingRegex = (collection, regex) =>
     return result
   }, true)
 
-const doesContainAllowedValue = (values = [], currentValue = '') => {
-  if (values.length === 0 && currentValue === '') return true
-  const regex = values.map(value => `^${value}$`).join('|')
-  return new RegExp(`(${regex})`).test(currentValue)
+const doesContainAllowedValue = (allowedValues = [], value = '') => {
+  if (!allowedValues.length && value === '') return true
+  const regex = allowedValues.map(value => `^${value}$`).join('|')
+  return new RegExp(`(${regex})`).test(value)
 }
 
 const exampleLines = fs.readFileSync(sourceFilePath, 'utf8').split('\n')
