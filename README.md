@@ -33,7 +33,7 @@ Parameters:
 
 ## Example
 
-Create `.env.example` file that serves as a template for you production `.env` files. This file is checked to the code repository.
+Create `.env.example` file that serves as a template for your production `.env` files. This file is checked into the code repository.
 
 E.g.
 
