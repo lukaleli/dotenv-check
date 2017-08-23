@@ -39,7 +39,7 @@ const SOURCE_LINE_REGEX = /\w+=(\w+)?/
  * @param {string} [msg=''] 
  */
 const log = (msg = '') => {
-  if (!SILENT_MODE) console.log(`[DOTENV CHECK] ${msg}`)
+  !SILENT_MODE && console.log(`[DOTENV CHECK] ${msg}`)
 }
 
 /**
@@ -55,7 +55,7 @@ const log = (msg = '') => {
 const exitIfFalse = (condition, desc = '', logOnFalse) => {
   if (!condition) {
     log(`if ${desc} \n NOPE \n`)
-    if (logOnFalse) log(`[HINT]: ${logOnFalse}\n\n`)
+    logOnFalse && log(`[HINT]: ${logOnFalse}\n\n`)
     log('EXITING\n')
     process.exit(1)
   } else {
@@ -73,9 +73,7 @@ const tokenizeSource = (line = '') => {
   const result = {}
   const [key, value] = line.split('=')
   result.key = key
-  if (value) {
-    result.allowedValues = value.split('|')
-  }
+  if (value) result.allowedValues = value.split('|')
   return result
 }
 
@@ -113,9 +111,7 @@ const isExactNumberOfLines = (a = [], b = []) => a.length === b.length
  */
 const areLinesMatchingRegex = (collection, regex) =>
   collection.reduce((result, element) => {
-    if (!regex.test(element)) {
-      return false
-    }
+    if (!regex.test(element)) return false
     return result
   }, true)
 
