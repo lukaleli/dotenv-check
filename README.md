@@ -41,7 +41,7 @@ CRASHLYTICS_BUILD_SECRET=
 
 **NOTE:**
 
-**You can specify allowed values for your variables. In above example ENV variable can have one of these values: "dev" or "staging" or "production". If the target file won't follow the rul script will fail with exit code 1.**
+**You can specify allowed values for your variables. In above example ENV variable can have one of these values: "dev" or "staging" or "production". If the target file won't follow the rule script will fail with exit code 1.**
 
 Now create, e.g. production env file:
 
