@@ -16,38 +16,36 @@ const mapArgsToObject = (args = []) =>
     }, {})
 
 const argv = mapArgsToObject(process.argv.slice(2))
-const exampleFilePath = argv.s
+const sourceFilePath = argv.s
 const targetFilePath = argv.t
 const TARGET_LINE_REGEX = /\w+=\w+/
-const EXAMPLE_LINE_REGEX = /\w+=(\w+)?/
+const SOURCE_LINE_REGEX = /\w+=(\w+)?/
 
 const log = (msg = '') => {
   console.log(`[DOTENV CHECK] ${msg}`)
 }
 
-if (!exampleFilePath) {
-  log('Please provide source file with -s argument')
+if (!sourceFilePath) {
+  log('Please provide source file path with -s argument')
   process.exit(1)
 }
 
 if (!targetFilePath) {
-  log('Please provide target file with -t argument')
+  log('Please provide target file path with -t argument')
   process.exit(1)
 }
 
-if (!fs.existsSync(exampleFilePath)) {
-  log("Source env file doesn't exist")
+if (!fs.existsSync(sourceFilePath)) {
+  log(`Source file (${sourceFilePath}) doesn't exist`)
   process.exit(1)
 }
 
 if (!fs.existsSync(targetFilePath)) {
-  log("Target env file doesn't exist")
+  log(`Target file (${targetFilePath}) doesn't exist`)
   process.exit(1)
 }
 
-log(
-  `\n\n<<<<<< Comparing ${targetFilePath} against ${exampleFilePath} >>>>>>\n\n`
-)
+log(`\n\nComparing ${targetFilePath} against ${sourceFilePath}\n\n`)
 
 const exitIfFalse = (condition, desc = '') => {
   if (!condition) {
@@ -93,7 +91,7 @@ const checkIfContainsAllowedValue = (values = [], currentValue = '') => {
   return new RegExp(`(${regex})`).test(currentValue)
 }
 
-const exampleLines = fs.readFileSync(exampleFilePath, 'utf8').split('\n')
+const exampleLines = fs.readFileSync(sourceFilePath, 'utf8').split('\n')
 const targetLines = fs.readFileSync(targetFilePath, 'utf8').split('\n')
 
 exitIfFalse(
@@ -102,7 +100,7 @@ exitIfFalse(
 )
 
 exitIfFalse(
-  areLinesMatchingRegex(exampleLines, EXAMPLE_LINE_REGEX),
+  areLinesMatchingRegex(exampleLines, SOURCE_LINE_REGEX),
   'example env lines match <KEY>=<?VALUE> pattern'
 )
 
@@ -129,5 +127,5 @@ parsedExampleTokens.forEach(({ key, allowedValues }) => {
 })
 
 log('SUCCESS!')
-log(`${targetFilePath} matches ${exampleFilePath}`)
+log(`${targetFilePath} matches ${sourceFilePath}`)
 process.exit(0)
