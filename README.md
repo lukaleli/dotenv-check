@@ -1,6 +1,6 @@
 # dotenv-check
 
-<img src="https://user-images.githubusercontent.com/2745825/29663747-ee6b95b8-88cc-11e7-9e28-1d6987a44387.png" width="150">
+<img src="https://user-images.githubusercontent.com/2745825/29663827-5fdb09e0-88cd-11e7-8d68-76cf84d7ce5a.png" width="150">
 
 ## What's that?
 
