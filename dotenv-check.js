@@ -1,13 +1,21 @@
-#!/usr/bin/env node
-
 const fs = require('fs')
 const path = require('path')
+const colors = require('colors')
+
+const OPENER = 'DOTENV-CHECK'.bold.magenta
+const SUCCESS_TAG = ' SUCCESS '.bgGreen.bold.white
+const ERROR_TAG = ' ERROR   '.bgRed.bold.white
+const FIX_TAG = ' FIX     '.bgCyan.bold.white
+const INFO_TAG = ' INFO    '.bgBlue.bold.white
+
+const STOP_MSG = ' STOP    '.bgRed.bold.white
+const PASS_MSG = ' PASS    '.bgGreen.bold.white
 
 /**
  * Maps command line parameters to the object
  * 
  * @param {any} [args=[]] 
-* @returns Object
+ * @returns Object
  */
 const mapArgsToObject = (args = []) =>
   args
@@ -27,9 +35,10 @@ const mapArgsToObject = (args = []) =>
       return result
     }, {})
 
+
 const argv = mapArgsToObject(process.argv.slice(2))
-const sourceFilePath = argv.s
-const targetFilePath = argv.t
+const sourceFilePath = argv.s || '.env.example'
+const targetFilePath = argv.t || '.env'
 const sourceFileName = path.basename(sourceFilePath)
 const targetFileName = path.basename(targetFilePath)
 const SILENT_MODE = argv.silent
@@ -42,7 +51,7 @@ const SOURCE_LINE_REGEX = /\w+=(\w+)?/
  * @param {string} [msg=''] 
  */
 const log = (msg = '') => {
-  !SILENT_MODE && console.log(`[DOTENV CHECK] ${msg}`)
+  !SILENT_MODE && console.log(msg + '\n')
 }
 
 /**
@@ -57,12 +66,12 @@ const log = (msg = '') => {
  */
 const exitIfFalse = (condition, desc = '', logOnFalse) => {
   if (!condition) {
-    log(`if ${desc} \n NOPE \n`)
-    logOnFalse && log(`[HINT]: ${logOnFalse}\n\n`)
-    log('EXITING\n')
+    log(`${ERROR_TAG} ${desc}`)
+    logOnFalse && log(`${FIX_TAG} ${logOnFalse}`)
+    log(STOP_MSG)
     process.exit(1)
   } else {
-    log(`if ${desc} \n YUP \n`)
+    log(`${SUCCESS_TAG} ${desc}`)
   }
 }
 
@@ -132,55 +141,57 @@ const doesContainAllowedValue = (allowedValues = [], value = '') => {
   return new RegExp(`(${regex})`).test(value)
 }
 
+log(`\n${OPENER}\n`)
+
 // Check if source file path was provided
 if (!sourceFilePath) {
-  log('Please provide source file path with -s argument')
+  log(`${ERROR_TAG} Please provide source file path with ${'-s'.italic.magenta} argument`)
   process.exit(1)
 }
 
 // Check if target file path was provided
 if (!targetFilePath) {
-  log('Please provide target file path with -t argument')
+  log(`${ERROR_TAG} Please provide target file path with ${'t'.italic.magenta} argument`)
   process.exit(1)
 }
 
 // Check if source file exists
 if (!fs.existsSync(sourceFilePath)) {
-  log(`Source file (${sourceFilePath}) doesn't exist`)
+  log(`${ERROR_TAG} Source file ${sourceFilePath.italic.magenta} doesn't exist`)
   process.exit(1)
 }
 
 // Check if target file exists
 if (!fs.existsSync(targetFilePath)) {
-  log(`Target file (${targetFilePath}) doesn't exist`)
+  log(`${ERROR_TAG} Target file ${targetFilePath.italic.magenta} doesn't exist`)
   process.exit(1)
 }
 
-log(`\n\nComparing ${targetFileName} against ${sourceFileName}\n\n`)
+log(`${INFO_TAG} Compare ${targetFileName.italic.magenta} against ${sourceFileName.italic.magenta}`)
 
 // Split both files into lines
-const sourceLines = fs.readFileSync(sourceFilePath, 'utf8').split('\n')
-const targetLines = fs.readFileSync(targetFilePath, 'utf8').split('\n')
+const sourceLines = fs.readFileSync(sourceFilePath, 'utf8').trim().split('\n')
+const targetLines = fs.readFileSync(targetFilePath, 'utf8').trim().split('\n')
 
 // Check if arrays have the same length
 exitIfFalse(
   isExactNumberOfLines(sourceLines, targetLines),
-  'source and target files have the same number of lines',
-  'Source and target files should have the same number of declared variables. Double check it!'
+  `Source and target files have the same number of lines`,
+  `Source and target files should have the same number of declared variables. Double check it!`
 )
 
 // Check if source file is properly formated
 exitIfFalse(
   areLinesMatchingRegex(sourceLines, SOURCE_LINE_REGEX),
-  'source env lines match <KEY>=<?ALLOWED_VALUES> pattern',
-  'Check variables declaration in your source file. They should match <KEY>=<?ALLOWED_VALUES> pattern'
+  `Source env lines match ${'KEY=?ALLOWED_VALUES'.italic.magenta} pattern`,
+  `Check variables declaration in your source file. They should match ${'KEY=?ALLOWED_VALUES'.italic.magenta} pattern`
 )
 
 // Check if target file is properly formated
 exitIfFalse(
   areLinesMatchingRegex(targetLines, TARGET_LINE_REGEX),
-  'target env lines match <KEY>=<VALUE> pattern',
-  'Check variables declaration in your target file. They should match <KEY>=<VALUE> pattern'
+  `Target env lines match ${'KEY=VALUE'.italic.magenta} pattern`,
+  `Check variables declaration in your target file. They should match ${'KEY=VALUE'.italic.magenta} pattern`
 )
 
 // Tokenize both arrays
@@ -190,21 +201,19 @@ const tokenizedTargetVars = targetLines.map(tokenizeTarget)
 // Compare source file tokens with target file tokens
 tokenizedSourceVars.forEach(({ key, allowedValues }) => {
   const targetKeyIndex = tokenizedTargetVars.findIndex(el => el.key === key)
-  exitIfFalse(targetKeyIndex !== -1, `target has key: $${key}`)
+  exitIfFalse(targetKeyIndex !== -1, `Target has key: ${key.italic.magenta}`)
   const targetToken = tokenizedTargetVars[targetKeyIndex]
   if (!allowedValues) return
   exitIfFalse(
     doesContainAllowedValue(allowedValues, targetToken.value),
-    `target key $${key} equals one of the following values: ${allowedValues.join(
+    `Target key ${key.italic.magenta} equals one of the following values: ${allowedValues.join(
       ' | '
-    )}`,
-    `$${key} in your target env file must match one of these values: 
-    ${allowedValues.map(x => `\n   * ${x}\n`).join('')}
-    Current value is: ${targetToken.value}  
-    `
+    ).italic.magenta}`,
+    `${key.italic.magenta} in your target env file must match one of these values: 
+    ${allowedValues.map(x => `\n * ${x.magenta}\n`).join('')}\n Current value is: ${targetToken.value.italic.magenta}`
   )
 })
 
-log('SUCCESS!')
-log(`${targetFileName} matches ${sourceFileName}`)
+log(`${INFO_TAG} ${targetFileName.italic.magenta} matches ${sourceFileName.italic.magenta}`)
+log(PASS_MSG)
 process.exit(0)

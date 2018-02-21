@@ -1,0 +1,29 @@
+{
+  "name": "dotenv-check",
+  "version": "1.0.0",
+  "description": "Check you .env files against the template",
+  "main": "dotenv-check.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "nexe dotenv-check.js --bundle ./nexe-bundle.js --build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lukaleli/dotenv-check.git"
+  },
+  "keywords": [
+    "dotenv",
+    "env"
+  ],
+  "author": "Lukasz Lelinski <lukasz@lelinski.pl> (https://programmersbyproducts.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lukaleli/dotenv-check/issues"
+  },
+  "homepage": "https://github.com/lukaleli/dotenv-check#readme",
+  "dependencies": {
+    "colors": "1.1.2",
+    "pify": "3.0.0",
+    "webpack": "3.11.0"
+  }
+}

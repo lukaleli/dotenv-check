@@ -4,7 +4,7 @@
 
 ## What's that?
 
-This is a simple Node-based command-line tool to check .env file against example file. No dependencies! (except Node)
+This is a simple Node-based command-line tool to check .env file against example file. No dependencies!
 
 Following script ensures that:
 - example file exists
@@ -15,20 +15,16 @@ Following script ensures that:
 
 You can easily pipe it with your other tools during, e.g. the build process. Script returns correct exit codes for success (0) and failure (1). 
 
-## Requirements
-
-Node >= 6.4.0
-
 ## Usage
 
-`./dotenv-check.js -s <EXAMPLE_FILE_PATH> -t <TARGET_FILE_PATH>`
+`./dotenv-check -s <EXAMPLE_FILE_PATH> -t <TARGET_FILE_PATH>`
 
 Parameters:
 
 ```Shell
--s <PATH>     Source file path (template file)
+-s <PATH>     Source file path (template file), defaults to .env.exampl (OPTIONAL)
 
--t <PATH>     Target file path to check against
+-t <PATH>     Target file path to check against, defaults to .env (OPTIONAL)
 
 --silent      Suppress output messages
 ```
@@ -71,4 +67,8 @@ CRASHLYTICS_BUILD_SECRET=skg9d8asyohdashd90asdjkbashd90asihdas
 
 And check your `.env` file against `.env.example`:
 
-`./dotenv-check.js -s .env.example -t .env`
+`./dotenv-check`
+
+or more explicitly
+
+`./dotenv-check -s .env.example -t .env`
