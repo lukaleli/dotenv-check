@@ -4,9 +4,20 @@
 
 ## What's that?
 
-This is a simple Node-based command-line tool to check .env file against example file. No dependencies!
+This is a simple Node-based command-line tool to check .env file against example file.
+
+Script comes in two forms:
+
+- as a Node.js script
+- as standalone executable compiled with `hexe`
+
+Both of these forms come with caveats:
+
+- Node.js version requires Node.js installed in the system
+- standalone binary version is quite large (34MB, duh), because it's compiled along with Node.js environment
 
 Following script ensures that:
+
 - example file exists
 - target file exists
 - example and target file is in a correct format
@@ -22,11 +33,11 @@ You can easily pipe it with your other tools during, e.g. the build process. Scr
 Parameters:
 
 ```Shell
--s <PATH>     Source file path (template file), defaults to .env.exampl (OPTIONAL)
+-s <PATH>     Source file path (template file), defaults to .env.example (OPTIONAL)
 
 -t <PATH>     Target file path to check against, defaults to .env (OPTIONAL)
 
---silent      Suppress output messages
+--silent      Suppress output messages (OPTIONAL)
 ```
 
 ## Example
