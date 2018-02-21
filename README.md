@@ -8,12 +8,12 @@ This is a simple Node-based command-line tool to check .env file against example
 
 Script comes in two forms:
 
-- as a Node.js script
-- as standalone executable compiled with `hexe`
+- as a simple javascript script
+- as a standalone executable compiled with `hexe`
 
 Both of these forms come with caveats:
 
-- Node.js version requires Node.js installed in the system
+- javascript version requires Node.js installed in the system to run it
 - standalone binary version is quite large (34MB, duh), because it's compiled along with Node.js environment
 
 Following script ensures that:
