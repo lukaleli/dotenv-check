@@ -11,6 +11,8 @@ const INFO_TAG = ' INFO    '.bgBlue.bold.white
 const STOP_MSG = ' STOP    '.bgRed.bold.white
 const PASS_MSG = ' PASS    '.bgGreen.bold.white
 
+const c = (str = '') => str.italic.magenta
+
 /**
  * Maps command line parameters to the object
  * 
@@ -145,29 +147,29 @@ log(`\n${OPENER}\n`)
 
 // Check if source file path was provided
 if (!sourceFilePath) {
-  log(`${ERROR_TAG} Please provide source file path with ${'-s'.italic.magenta} argument`)
+  log(`${ERROR_TAG} Please provide source file path with ${c('-s')} argument`)
   process.exit(1)
 }
 
 // Check if target file path was provided
 if (!targetFilePath) {
-  log(`${ERROR_TAG} Please provide target file path with ${'t'.italic.magenta} argument`)
+  log(`${ERROR_TAG} Please provide target file path with ${c('t')} argument`)
   process.exit(1)
 }
 
 // Check if source file exists
 if (!fs.existsSync(sourceFilePath)) {
-  log(`${ERROR_TAG} Source file ${sourceFilePath.italic.magenta} doesn't exist`)
+  log(`${ERROR_TAG} Source file ${c(sourceFilePath)} doesn't exist`)
   process.exit(1)
 }
 
 // Check if target file exists
 if (!fs.existsSync(targetFilePath)) {
-  log(`${ERROR_TAG} Target file ${targetFilePath.italic.magenta} doesn't exist`)
+  log(`${ERROR_TAG} Target file ${c(targetFilePath)} doesn't exist`)
   process.exit(1)
 }
 
-log(`${INFO_TAG} Compare ${targetFileName.italic.magenta} against ${sourceFileName.italic.magenta}`)
+log(`${INFO_TAG} Compare ${c(targetFileName)} against ${c(sourceFileName)}`)
 
 // Split both files into lines
 const sourceLines = fs.readFileSync(sourceFilePath, 'utf8').trim().split('\n')
@@ -183,15 +185,15 @@ exitIfFalse(
 // Check if source file is properly formated
 exitIfFalse(
   areLinesMatchingRegex(sourceLines, SOURCE_LINE_REGEX),
-  `Source env lines match ${'KEY=?ALLOWED_VALUES'.italic.magenta} pattern`,
-  `Check variables declaration in your source file. They should match ${'KEY=?ALLOWED_VALUES'.italic.magenta} pattern`
+  `Source env lines match ${c('KEY=?ALLOWED_VALUES')} pattern`,
+  `Check variables declaration in your source file. They should match ${c('KEY=?ALLOWED_VALUES')} pattern`
 )
 
 // Check if target file is properly formated
 exitIfFalse(
   areLinesMatchingRegex(targetLines, TARGET_LINE_REGEX),
-  `Target env lines match ${'KEY=VALUE'.italic.magenta} pattern`,
-  `Check variables declaration in your target file. They should match ${'KEY=VALUE'.italic.magenta} pattern`
+  `Target env lines match ${c('KEY=VALUE')} pattern`,
+  `Check variables declaration in your target file. They should match ${c('KEY=VALUE')} pattern`
 )
 
 // Tokenize both arrays
@@ -201,19 +203,19 @@ const tokenizedTargetVars = targetLines.map(tokenizeTarget)
 // Compare source file tokens with target file tokens
 tokenizedSourceVars.forEach(({ key, allowedValues }) => {
   const targetKeyIndex = tokenizedTargetVars.findIndex(el => el.key === key)
-  exitIfFalse(targetKeyIndex !== -1, `Target has key: ${key.italic.magenta}`)
+  exitIfFalse(targetKeyIndex !== -1, `Target has key: ${c(key)}`)
   const targetToken = tokenizedTargetVars[targetKeyIndex]
   if (!allowedValues) return
   exitIfFalse(
     doesContainAllowedValue(allowedValues, targetToken.value),
-    `Target key ${key.italic.magenta} equals one of the following values: ${allowedValues.join(
+    `Target key ${c(key)} equals one of the following values: ${c(allowedValues.join(
       ' | '
-    ).italic.magenta}`,
+    ))}`,
     `${key.italic.magenta} in your target env file must match one of these values: 
-    ${allowedValues.map(x => `\n * ${x.magenta}\n`).join('')}\n Current value is: ${targetToken.value.italic.magenta}`
+    ${allowedValues.map(x => `\n * ${c(x)}\n`).join('')}\n Current value is: ${c(targetToken.value)}`
   )
 })
 
-log(`${INFO_TAG} ${targetFileName.italic.magenta} matches ${sourceFileName.italic.magenta}`)
+log(`${INFO_TAG} ${c(targetFileName)} matches ${c(sourceFileName)}`)
 log(PASS_MSG)
 process.exit(0)
