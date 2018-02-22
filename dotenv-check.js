@@ -2,15 +2,16 @@ const fs = require('fs')
 const path = require('path')
 const colors = require('colors')
 
+// messages
 const OPENER = 'DOTENV-CHECK'.bold.magenta
 const SUCCESS_TAG = ' SUCCESS '.bgGreen.bold.white
 const ERROR_TAG = ' ERROR   '.bgRed.bold.white
 const FIX_TAG = ' FIX     '.bgCyan.bold.white
 const INFO_TAG = ' INFO    '.bgBlue.bold.white
-
 const STOP_MSG = ' STOP    '.bgRed.bold.white
 const PASS_MSG = ' PASS    '.bgGreen.bold.white
 
+// colorize string
 const c = (str = '') => str.italic.magenta
 
 /**
